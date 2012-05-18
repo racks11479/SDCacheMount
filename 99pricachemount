@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-#Create seperate alternate boot cache partition using loop mount images for racks dualbootsd
+#Create seperate primary boot cache partition using loop mount images for racks dualbootsd
 
 #force mount /sdcard
     busybox mount -t vfat -o rw,dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702 /dev/block/mmcblk1p7 /sdcard
