@@ -9,10 +9,9 @@ MNTPARAM=dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask
 ALTCACHE=/sdcard/alt-cache.img
 
     if ! [ -e $ALTCACHE ] ; then
-
-	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=100000
+    	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=100000
     	mke2fs -F $ALTCACHE
-    fi
+		fi
 
 #create loop device node for cache
     mknod -m640 /dev/block/loop99 b 7 99
@@ -35,3 +34,4 @@ ALTCACHE=/sdcard/alt-cache.img
     chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     busybox mount -o remount,ro /system
+    

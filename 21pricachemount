@@ -1,24 +1,23 @@
 #!/system/bin/sh
 
-#Create seperate alternate boot cache partition using loop mount images for racks dualbootsd
+#Create seperate primary boot cache partition using loop mount images for racks dualbootsd
 
 #force mount /sdcard
 MNTPARAM=dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702
     busybox mount vfat rw,$MNTPARAM /dev/block/mmcblk1p7 /sdcard
 
-ALTCACHE=/sdcard/alt-cache.img
+PRICACHE=/sdcard/pri-cache.img
 
-    if ! [ -e $ALTCACHE ] ; then
-
-	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=100000
-    	mke2fs -F $ALTCACHE
+    if ! [ -e $PRICACHE ] ; then
+    	dd if=/dev/zero of=$PRICACHE bs=1024 count=1 seek=100000
+    	mke2fs -F $PRICACHE
     fi
 
 #create loop device node for cache
     mknod -m640 /dev/block/loop99 b 7 99
 
 #setup loop mount for cache img from sdcard
-    losetup /dev/block/loop99 $ALTCACHE
+    losetup /dev/block/loop99 $PRICACHE
     sleep 5
     busybox mount -t ext4 -o rw,noatime,nosuid,nodev,barrier=1 /dev/block/loop99 /cache
     chown system cache /cache
@@ -35,3 +34,4 @@ ALTCACHE=/sdcard/alt-cache.img
     chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     busybox mount -o remount,ro /system
+   
