@@ -7,7 +7,7 @@
 
 ALTCACHE=/sdcard/alt-cache.img
 
-    if ![ -e $ALTCACHE ] ; then
+    if ! [ -e $ALTCACHE ] ; then
     	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=75000
     	mke2fs -F $ALTCACHE
 		fi
