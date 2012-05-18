@@ -3,9 +3,8 @@
 #Create seperate alternate boot cache partition using loop mount images for racks dualbootsd
 
 #force mount /sdcard
-    busybox mount -t vfat -o rw,dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702 /dev/block/mmcblk1p7 /sdcard
-
-#check to see if cache img exist, if not then create
+MNTPARAM=dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702
+    busybox mount vfat rw,$MNTPARAM /dev/block/mmcblk1p7 /sdcard
 
 ALTCACHE=/sdcard/alt-cache.img
 

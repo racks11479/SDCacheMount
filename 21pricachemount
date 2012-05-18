@@ -19,13 +19,19 @@ PRICACHE=/sdcard/pri-cache.img
 #setup loop mount for cache img from sdcard
     losetup /dev/block/loop99 $PRICACHE
     sleep 5
-
-    busybox mount -t ext2 -o rw /dev/block/loop99 /cache
-    chown /R system cache /cache
+    busybox mount -t ext4 -o rw,noatime,nosuid,nodev,barrier=1 /dev/block/loop99 /cache
+    chown system cache /cache
     chmod 0771 /cache
+
+    mkdir -p /cache/recovery
+    chown system cache /cache/recovery
     chmod 0770 /cache/recovery
 
+    chmod 0770 /cache/lost+found
+
     busybox mount -o remount,rw /system
+    mkdir -p /cache/dalvik-cache
+    chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     busybox mount -o remount,ro /system
    
