@@ -3,13 +3,13 @@
 #Create seperate primary boot cache partition using loop mount images for racks dualbootsd
 
 #force mount /sdcard
-    busybox mount -o rw /dev/block/mmcblk1p7 /sdcard
+MNTPARAM=dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702
+    busybox mount vfat rw,$MNTPARAM /dev/block/mmcblk1p7 /sdcard
 
 PRICACHE=/sdcard/pri-cache.img
 
     if ! [ -e $PRICACHE ] ; then
-
-    	dd if=/dev/zero of=$PRICACHE bs=1024 count=1 seek=75000
+    	dd if=/dev/zero of=$PRICACHE bs=1024 count=1 seek=100000
     	mke2fs -F $PRICACHE
     fi
 
@@ -19,16 +19,13 @@ PRICACHE=/sdcard/pri-cache.img
 #setup loop mount for cache img from sdcard
     losetup /dev/block/loop99 $PRICACHE
     sleep 5
-    busybox mount -t ext2 -o rw /dev/block/loop99 /cache
-    chown system cache /cache
-    chmod 0771 /cache
 
-    chown system cache /cache/recovery
+    busybox mount -t ext2 -o rw /dev/block/loop99 /cache
+    chown /R system cache /cache
+    chmod 0771 /cache
     chmod 0770 /cache/recovery
 
     busybox mount -o remount,rw /system
-    chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     busybox mount -o remount,ro /system
-
-    
+   
