@@ -3,11 +3,14 @@
 #Create seperate alternate boot cache partition using loop mount images for racks dualbootsd
 
 #force mount /sdcard
-    busybox mount /dev/block/mmcblk1p7 /sdcard
+    busybox mount -o rw /dev/block/mmcblk1p7 /sdcard
 
 ALTCACHE=/sdcard/alt-cache.img
 
-    if [ -e $ALTCACHE ] ; then
+    if ![ -e $ALTCACHE ] ; then
+    	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=75000
+    	mke2fs -F $ALTCACHE
+		fi
 
 #create loop device node for cache
     mknod -m640 /dev/block/loop99 b 7 99
@@ -16,39 +19,12 @@ ALTCACHE=/sdcard/alt-cache.img
     losetup /dev/block/loop99 $ALTCACHE
     sleep 5
     busybox mount -t ext2 -o rw /dev/block/loop99 /cache
-    chown system cache /cache
+    chown /R system cache /cache
     chmod 0771 /cache
 
-    chown system cache /cache/recovery
-    chmod 0770 /cache/recovery
+     chmod 0770 /cache/recovery
 
     busybox mount -o remount,rw /system
-    chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     busybox mount -o remount,ro /system
-
-    else
-    	dd if=/dev/zero of=$ALTCACHE bs=1024 count=1 seek=75000
-    	mke2fs -F $ALTCACHE
-
-	#create loop device node for cache
-    	mknod -m640 /dev/block/loop99 b 7 99
-
-	#setup loop mount for cache img from sdcard
-    	losetup /dev/block/loop99 $ALTCACHE
-    	sleep 5
-    	busybox mount -t ext2 -o rw /dev/block/loop99 /cache
-    	chown system cache /cache
-    	chmod 0771 /cache
-
-    	mkdir /cache/recovery
-    	chown system cache /cache/recovery
-    	chmod 0770 /cache/recovery
-
-    	mkdir /cache/dalvik-cache
-    	busybox mount -o remount,rw /system
-   	chown system system /cache/dalvik-cache
-    	chmod 0771 /cache/dalvik-cache
-    	busybox mount -o remount,ro /system
-    fi
     
