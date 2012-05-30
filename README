@@ -1,0 +1,1 @@
+An init.d script to allow creation and mounting of seperate ext4 /cache img for multiboot roms.
