@@ -2,19 +2,23 @@
 
 #Create seperate primary boot cache partition using loop mount images for racks dualbootsd
 
-#force mount /sdcard
+#create separate mount point for /sdcache
 MNTPARAM=dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702
-    busybox mount -t vfat -o rw,$MNTPARAM /dev/block/mmcblk1p7 /sdcard
+	busybox mount -o remount,rw rootfs /
+	mkdir -p /mnt/sdcache
+	chown system sdcard /mnt/sdcache
+	busybox mount -t vfat -o rw,$MNTPARAM /dev/block/mmcblk1p7 /mnt/sdcache
+	busybox mount -o remount,ro rootfs /
     
 #determine which make ext4 binary is available
 CM7EXT4=/system/bin/mke2fs
 CM9EXT4=/system/bin/make_ext4fs
 
 #check to see if cache .img exist, if not then create it
-PRICACHE=/sdcard/pri-cache.img
+PRICACHE=/mnt/sdcache/pri-cache.img
 
     if ! [ -e $PRICACHE ] ; then
-    	dd if=/dev/zero of=$PRICACHE bs=1024 count=1 seek=100000
+      dd if=/dev/zero of=$PRICACHE bs=1024 count=1 seek=100000
     	if [ -e $CM7EXT4 ] ; then
     	$CM7EXT4 -F -T ext4 $PRICACHE
     		else
